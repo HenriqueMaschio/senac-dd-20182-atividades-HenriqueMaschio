@@ -12,10 +12,12 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Window.Type;
+import java.awt.Font;
 
 public class TelaInserir {
 
-	private JFrame frame;
+	private JFrame frmCadastroDeFuncionario;
 	private JTextField txtID;
 	private JTextField txtNome;
 	private JTextField txtCPF;
@@ -28,7 +30,7 @@ public class TelaInserir {
 			public void run() {
 				try {
 					TelaInserir window = new TelaInserir();
-					window.frame.setVisible(true);
+					window.frmCadastroDeFuncionario.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -47,36 +49,38 @@ public class TelaInserir {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmCadastroDeFuncionario = new JFrame();
+		frmCadastroDeFuncionario.setFont(new Font("Arial", Font.PLAIN, 18));
+		frmCadastroDeFuncionario.setTitle("Cadastro de Funcionario\r\n");
+		frmCadastroDeFuncionario.setBounds(100, 100, 450, 300);
+		frmCadastroDeFuncionario.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmCadastroDeFuncionario.getContentPane().setLayout(null);
 		
 		JLabel lblId = new JLabel("ID:");
 		lblId.setBounds(73, 86, 46, 14);
-		frame.getContentPane().add(lblId);
+		frmCadastroDeFuncionario.getContentPane().add(lblId);
 		
 		txtID = new JTextField();
 		txtID.setBounds(73, 99, 276, 20);
-		frame.getContentPane().add(txtID);
+		frmCadastroDeFuncionario.getContentPane().add(txtID);
 		txtID.setColumns(10);
 		
 		JLabel lblNome = new JLabel("Nome:");
 		lblNome.setBounds(73, 130, 46, 14);
-		frame.getContentPane().add(lblNome);
+		frmCadastroDeFuncionario.getContentPane().add(lblNome);
 		
 		txtNome = new JTextField();
 		txtNome.setBounds(73, 145, 276, 20);
-		frame.getContentPane().add(txtNome);
+		frmCadastroDeFuncionario.getContentPane().add(txtNome);
 		txtNome.setColumns(10);
 		
 		JLabel lblCpf = new JLabel("CPF:");
 		lblCpf.setBounds(73, 176, 46, 14);
-		frame.getContentPane().add(lblCpf);
+		frmCadastroDeFuncionario.getContentPane().add(lblCpf);
 		
 		txtCPF = new JTextField();
 		txtCPF.setBounds(73, 190, 276, 20);
-		frame.getContentPane().add(txtCPF);
+		frmCadastroDeFuncionario.getContentPane().add(txtCPF);
 		txtCPF.setColumns(10);
 		
 		JButton btnFinalizar = new JButton("Finalizar");
@@ -89,6 +93,6 @@ public class TelaInserir {
 			}
 		});
 		btnFinalizar.setBounds(322, 227, 89, 23);
-		frame.getContentPane().add(btnFinalizar);
+		frmCadastroDeFuncionario.getContentPane().add(btnFinalizar);
 	}
 }
