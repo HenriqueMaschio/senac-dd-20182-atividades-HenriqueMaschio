@@ -1,15 +1,12 @@
-
 package br.sc.senac.dd.aula05.exercicio2.model.dao;
 
+import java.beans.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import br.sc.senac.dd.aula05.exercicio2.model.vo.Funcionario;
 
 /**
  * Classe abstrata com os métodos mínimos para que qualquer 
@@ -25,7 +22,8 @@ public abstract class BaseDAO<T> {
 	/**
 	 * 
 	 * @param entidade a entidade do tipo informado a ser persistida
-	 * @return 
+	 * @return id da entidade salva (caso valor positivo)
+	 *         -1 caso não tenha salvado
 	 * @throws SQLException
 	 */
 	public int inserir(T entidade){
@@ -44,10 +42,9 @@ public abstract class BaseDAO<T> {
 			//Este método DEVE ser implementado na classe concreta
 			this.setValoresAtributosInsert(entidade, preparedStmt);
 
-			boolean sucessoInsert = preparedStmt.execute();
-
-			if(sucessoInsert){
-				ResultSet rs = preparedStmt.getGeneratedKeys();
+			preparedStmt.executeUpdate();
+			ResultSet rs = preparedStmt.getGeneratedKeys();
+			if (rs.next()) {
 				idEntidadeSalva = rs.getInt(1);
 			}
 		} catch (SQLException e) {
@@ -64,7 +61,7 @@ public abstract class BaseDAO<T> {
 		//SET atributo1 = valor1, atributo2 = valor 2,... atributoN = valorN) WHERE IDTABELA = idEntidade
 		String sql = "UPDATE "+ getNomeTabela() + 
 				" SET " + getValoresClausulaSetUpdate(entidade)
-		+ " WHERE " +  getNomeColunaChavePrimaria() + " = " + idEntidade;
+				+ " WHERE " +  getNomeColunaChavePrimaria() + " = " + idEntidade;
 
 		Connection conn = Banco.getConnection();
 		PreparedStatement stmt = Banco.getPreparedStatement(conn, sql);
@@ -73,7 +70,7 @@ public abstract class BaseDAO<T> {
 		try {
 			//Este método DEVE ser implementado na classe concreta
 			this.setValoresAtributosUpdate(entidade, stmt);
-			
+
 			int retorno = stmt.executeUpdate();
 			sucessoUpdate = (retorno == CODIGO_RETORNO_SUCESSO_SQL);
 		} catch (SQLException e) {
@@ -211,7 +208,7 @@ public abstract class BaseDAO<T> {
 	 * @return String a clásula SET preenchida por completo.
 	 */
 	public abstract String getValoresClausulaSetUpdate(T entidade);
-	
+
 	public abstract void setValoresAtributosUpdate(T entidade, PreparedStatement stmt);
 
 	/**
@@ -224,31 +221,6 @@ public abstract class BaseDAO<T> {
 	 * oriundos do resultado.
 	 */
 	public abstract T construirObjetoDoResultSet(ResultSet resultado);
-	
-	public void setValoresAtributosInsert(Funcionario entidade, PreparedStatement preparedStmt) {
-		// TODO Auto-generated method stub
-		
-	}
-	public String getValoresClausulaSetUpdate(Funcionario entidade) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public void setValoresAtributosUpdate(Funcionario entidade, PreparedStatement preparedStmt) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void setValoresAtributosInsert(FuncionarioDAO entidade, PreparedStatement preparedStmt) {
-		// TODO Auto-generated method stub
-		
-	}
-	public String getValoresClausulaSetUpdate(FuncionarioDAO entidade) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public void setValoresAtributosUpdate(FuncionarioDAO entidade, PreparedStatement stmt) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	//TODO e como listar com filtros? Veremos mais à frente ;)
 

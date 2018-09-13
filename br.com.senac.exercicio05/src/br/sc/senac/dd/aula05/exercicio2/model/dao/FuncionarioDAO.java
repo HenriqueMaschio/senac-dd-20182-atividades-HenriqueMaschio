@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import br.sc.senac.dd.aula05.exercicio2.model.vo.Funcionario;
 
@@ -45,10 +44,10 @@ public class FuncionarioDAO extends BaseDAO<Funcionario> {
 	public String getValoresClausulaSetUpdate(Funcionario entidade) {
 		// SET NOME=func.getNome(), MATRICULA=func.getNumeroMatricula()...
 		String clausulaSet = " NOME = ?, MATRICULA = ?, CPF = ?"; 
-
+		
 		return clausulaSet;
 	}
-
+	
 	@Override
 	public void setValoresAtributosUpdate(Funcionario entidade, PreparedStatement preparedStmt){
 		//Preenche cada interrogação da cláusula SET
@@ -63,7 +62,7 @@ public class FuncionarioDAO extends BaseDAO<Funcionario> {
 
 	@Override
 	public Funcionario construirObjetoDoResultSet(ResultSet resultado) {
-
+		
 		Funcionario novoFuncionario = null; //retorna null caso o resultado esteja vazio
 		try {
 			novoFuncionario = new Funcionario();
@@ -74,86 +73,31 @@ public class FuncionarioDAO extends BaseDAO<Funcionario> {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return novoFuncionario;
 	}
 
-	@Override
-	public void setValoresAtributosInsert(FuncionarioDAO entidade, PreparedStatement preparedStmt) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String getValoresClausulaSetUpdate(FuncionarioDAO entidade) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValoresAtributosUpdate(FuncionarioDAO entidade, PreparedStatement stmt) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ArrayList<Funcionario> ListarTodosFuncionarios() {
-
-		String sql = " SELECT * FROM FUNCIONARIO ";
-
-		Connection conn =  Banco.getConnection();
-		PreparedStatement prepStmt = Banco.getPreparedStatement(conn, sql);
-		ArrayList<Funcionario> funcionarios = new ArrayList<Funcionario>();
-
-		try {
-
-			ResultSet result = prepStmt.executeQuery(sql);
-
-			while(result.next()){
-				Funcionario f = new Funcionario();
-
-				//Obtendo valores pelo NOME DA COLUNA
-				f.setIdFuncionario(result.getInt("ID"));
-				f.setNome(result.getString("NOME"));
-				f.setCpf(result.getString("CPF"));
-				f.setNumeroMatricula(result.getString("MATRICULA"));
-				funcionarios.add(f);
-
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-		}
-		return funcionarios;		
-
-	}
-	
-	public Funcionario obterPorId(int id){
-		String sql = " SELECT * FROM PRODUTO "
-				+ " WHERE ID=?";
+	public boolean temCPFCadastrado(String cpf) {
+		String sql = "SELECT COUNT(*) FROM FUNCIONARIO WHERE CPF = ?";
+		boolean temFuncionarioComEsseCPF = false;
 		
-		Connection conexao = Banco.getConnection();
-		PreparedStatement prepStmt = Banco.getPreparedStatement(conexao, sql);
-		Funcionario f = null;
-		
-		try {
-			prepStmt.setInt(1, id);
-			ResultSet result = prepStmt.executeQuery();
-			
-			while(result.next()){
-				f = new Funcionario();
-				
-				//Obtendo valores pelo NOME DA COLUNA
-				f.setIdFuncionario(result.getInt("ID"));
-				f.setNome(result.getString("NOME"));
-				f.setCpf(result.getString("CPF"));
-				f.setNumeroMatricula(result.getString("MATRICULA"));
+		Connection conn = Banco.getConnection();
+		PreparedStatement stmt = Banco.getPreparedStatement(conn, sql);
+		ResultSet resultado = null;
+		try{
+			stmt.setString(1, cpf);
+			resultado = stmt.executeQuery();
+			while(resultado.next()){
+				int quantidadeRegistros = resultado.getInt(1);
+				temFuncionarioComEsseCPF = (quantidadeRegistros > 0);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException e){
+			System.out.println("Erro ao consultar o CPF = " + cpf);
+		} finally {
+			Banco.closeResultSet(resultado);
+			Banco.closeStatement(stmt);
+			Banco.closeConnection(conn);
 		}
-		return f;
+		return temFuncionarioComEsseCPF;
 	}
-
-	
-
 }
